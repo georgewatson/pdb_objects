@@ -5,7 +5,7 @@ with open("README.md", 'r') as fh:
 
 setuptools.setup(
     name='pdb_objects',
-    version='0.1.0',
+    version='0.1.1',
     author='George Watson',
     author_email='george@georgewatson.me',
     description='Object-oriented processing of Protein Databank (PDB) files',

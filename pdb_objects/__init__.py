@@ -358,17 +358,28 @@ class Ter(PDBRecord):
                         (self.residue or Residue()).__str__()])
 
 
+def maybe_int(string):
+    """
+    Returns the integer value of a string if possible,
+    else None
+    """
+    try:
+        return int(string)
+    except ValueError:
+        return None
+
+
 def read_atom(line):
     """
     Reads an ATOM or HETATM from a PDB file into an Atom object
     """
     return Atom(record_type=line[:6].strip(),
-                num=int(line[6:11]),
+                num=maybe_int(line[6:11]),
                 name=line[12:16].strip(),
                 alt_location=line[16:17].strip(),
                 residue=Residue(name=line[17:21].strip(),
                                 chain=line[21:22].strip(),
-                                resid=int(line[22:26]),
+                                resid=maybe_int(line[22:26]),
                                 insertion=line[26:27].strip()),
                 coords={'x': float(line[30:38]),
                         'y': float(line[38:46]),
@@ -384,50 +395,50 @@ def read_helix(line):
     """
     Reads a HELIX record from a PDB file into a Helix object
     """
-    return Helix(helix_num=int(line[7:10]),
+    return Helix(helix_num=maybe_int(line[7:10]),
                  helix_id=line[11:14].strip(),
                  initial=Residue(name=line[15:19].strip(),
                                  chain=line[19:20].strip(),
-                                 resid=int(line[21:25]),
+                                 resid=maybe_int(line[21:25]),
                                  insertion=line[25:26].strip()),
                  terminal=Residue(name=line[27:31].strip(),
                                   chain=line[31:32].strip(),
-                                  resid=int(line[33:37]),
+                                  resid=maybe_int(line[33:37]),
                                   insertion=line[37:38].strip()),
-                 helix_type=int(line[38:40]),
+                 helix_type=maybe_int(line[38:40]),
                  comment=line[40:70].strip(),
-                 length=int(line[71:76]))
+                 length=maybe_int(line[71:76]))
 
 
 def read_sheet(line):
     """
     Reads a SHEET record from a PDB file into a Sheet object
     """
-    return Sheet(strand_num=int(line[7:10]),
+    return Sheet(strand_num=maybe_int(line[7:10]),
                  sheet_id=line[11:14].strip(),
-                 num_strands=int(line[14:16]),
+                 num_strands=maybe_int(line[14:16]),
                  initial=Residue(name=line[17:21].strip(),
                                  chain=line[21:22].strip(),
-                                 resid=int(line[22:26]),
+                                 resid=maybe_int(line[22:26]),
                                  insertion=line[26:27].strip()),
                  terminal=Residue(name=line[28:32].strip(),
                                   chain=line[32:33].strip(),
-                                  resid=int(line[33:37]),
+                                  resid=maybe_int(line[33:37]),
                                   insertion=line[38:39].strip()),
-                 sense=int(line[38:40]),
+                 sense=maybe_int(line[38:40]),
                  hbond={'current':
                         Atom(name=line[41:45].strip(),
                              residue=Residue(
                                  name=line[45:49].strip(),
                                  chain=line[49:50].strip(),
-                                 resid=int(line[50:54]),
+                                 resid=maybe_int(line[50:54]),
                                  insertion=line[54:55].strip())),
                         'previous':
                         Atom(name=line[56:60].strip(),
                              residue=Residue(
                                  name=line[60:64].strip(),
                                  chain=line[64:65].strip(),
-                                 resid=int(line[65:69]),
+                                 resid=maybe_int(line[65:69]),
                                  insertion=line[69:70].strip()))})
 
 
@@ -435,10 +446,10 @@ def read_ter(line):
     """
     Reads a TER record from a PDB file into a Ter object
     """
-    return Ter(num=int(line[5:11]),
+    return Ter(num=maybe_int(line[5:11]),
                residue=Residue(name=line[17:21].strip(),
                                chain=line[21:22].strip(),
-                               resid=int(line[22:26]),
+                               resid=maybe_int(line[22:26]),
                                insertion=line[26:27].strip()))
 
 
