@@ -1,4 +1,4 @@
-# PyPDB
+# PDB Objects
 
 Set of classes for object-oriented processing of records from PDB files
 
