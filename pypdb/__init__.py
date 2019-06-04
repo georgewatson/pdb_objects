@@ -182,7 +182,7 @@ class Atom(PDBRecord):
                         " ",
                         '{:4}'.format(self.name or ""),
                         self.alt_location or " ",
-                        (self.residue or Residue()).__str__(),
+                        self.residue or Residue(),
                         " "*3,
                         '{:8.3f}'.format(self.coords['x'] or 0),
                         '{:8.3f}'.format(self.coords['y'] or 0),
@@ -316,17 +316,16 @@ class Sheet(PDBRecord):
                         '{:>3}'.format(self.sheet_id or ""),
                         '{:>2}'.format(self.num_strands or ""),
                         " ",
-                        (self.initial or Residue()).__str__(),
+                        self.initial or Residue(),
                         " ",
-                        (self.terminal or Residue()).__str__(),
+                        self.terminal or Residue(),
                         '{:>2}'.format(self.sense or ""),
                         " ",
                         '{:4}'.format(self.hbond['current'].name or ""),
-                        (self.hbond['current'].residue or Residue()).__str__(),
+                        self.hbond['current'].residue or Residue(),
                         " ",
                         '{:4}'.format(self.hbond['previous'].name or ""),
-                        (self.hbond['previous'].residue or
-                         Residue()).__str__()])
+                        self.hbond['previous'].residue or Residue()])
 
 
 class Ter(PDBRecord):
@@ -355,7 +354,7 @@ class Ter(PDBRecord):
     def __str__(self):
         return "".join(['{:6}'.format(self.record_type),
                         '{:>5}'.format(self.num),
-                        (self.residue or Residue()).__str__()])
+                        self.residue or Residue()])
 
 
 def read_atom(line):
