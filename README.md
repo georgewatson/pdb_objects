@@ -35,3 +35,11 @@ Exposes the following public functions:
 * `read_pdb`
 
 See class, function, and method docstrings for more information.
+
+## Installation
+
+Available on PyPI.
+Use `pip3 install pdb-objects` to install,
+then put `import pdb_objects` at the top of your script.
+
+Alternatively, clone this repository.
