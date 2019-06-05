@@ -60,6 +60,57 @@ class PDBRecord:
         return str(self.__dict__)
 
 
+class Coords(PDBRecord):
+    """
+    A set of x, y, z coordinates
+    """
+    def __init__(self, x=None, y=None, z=None):
+        PDBRecord.__init__(self)
+        self.x = x
+        self.y = y
+        self.z = z
+
+    def __eq__(self, other):
+        return all(self.x == other.x, self.y == other.y, self.z == other.z)
+
+    def distance(self, point=None):
+        """
+        Returns the distance of the coordinates from a specified point
+        (defaults to the origin)
+        """
+        if not point:
+            point = Coords(0, 0, 0)
+        return pow(pow(self.x - point.x, 2) +
+                   pow(self.y - point.y, 2) +
+                   pow(self.z - point.z, 2), 0.5)
+
+    def __gt__(self, other):
+        return self.distance() > other.distance()
+
+    def __lt__(self, other):
+        return self.distance() < other.distance()
+
+    def __mul__(self, scalar):
+        return Coords(x=self.x * scalar,
+                      y=self.y * scalar,
+                      z=self.z * scalar)
+
+    def __div__(self, scalar):
+        return self.__mul__(1/scalar)
+
+    def __add__(self, other):
+        return Coords(x=self.x + other.x,
+                      y=self.y + other.y,
+                      z=self.z + other.z)
+
+    def __sub__(self, other):
+        return self.__add__(other.__mul__(-1))
+
+    def __str__(self):
+        return "".join(map('{:8.3f}'.format,
+                           [self.x or 0, self.y or 0, self.z or 0]))
+
+
 class Residue(PDBRecord):
     """
     A residue, as represented in a PDB file.
@@ -135,7 +186,7 @@ class Atom(PDBRecord):
         str name
         str alt_location
         Residue residue
-        {'x':float, 'y':float,'z':float} coords
+        Coords coords
         float occupancy
         float temp_factor
         str segment
@@ -143,7 +194,7 @@ class Atom(PDBRecord):
         str charge
     Public methods:
         is_element(str element)
-        distance({'x':float,'y':float,'z':float} point = {'x':0,'y':0,'z':0}
+        distance(Coords point={0,0,0})
     """
     def __init__(self, record_type='ATOM', num=None, name=None,
                  alt_location=None, residue=None, coords=None, occupancy=None,
@@ -184,9 +235,7 @@ class Atom(PDBRecord):
                         self.alt_location or " ",
                         (self.residue or Residue()).__str__(),
                         " "*3,
-                        '{:8.3f}'.format(self.coords['x'] or 0),
-                        '{:8.3f}'.format(self.coords['y'] or 0),
-                        '{:8.3f}'.format(self.coords['z'] or 0),
+                        (self.coords or Coords()).__str__(),
                         '{:6.2f}'.format(self.occupancy or 0),
                         '{:6.2f}'.format(self.temp_factor or 0),
                         " "*6,
@@ -209,11 +258,7 @@ class Atom(PDBRecord):
         Returns the distance of an atom from a specified point
         (defaults to the origin)
         """
-        if not point:
-            point = {'x': 0, 'y': 0, 'z': 0}
-        return pow(pow(self.coords['x'] - point['x'], 2) +
-                   pow(self.coords['y'] - point['y'], 2) +
-                   pow(self.coords['z'] - point['z'], 2), 0.5)
+        return self.coords.distance(point)
 
 
 class Helix(PDBRecord):
@@ -369,6 +414,17 @@ def maybe_int(string):
         return None
 
 
+def maybe_float(string):
+    """
+    Returns the floating-point value of a string if possible,
+    else None
+    """
+    try:
+        return float(string)
+    except ValueError:
+        return None
+
+
 def read_atom(line):
     """
     Reads an ATOM or HETATM from a PDB file into an Atom object
@@ -381,11 +437,11 @@ def read_atom(line):
                                 chain=line[21:22].strip(),
                                 resid=maybe_int(line[22:26]),
                                 insertion=line[26:27].strip()),
-                coords={'x': float(line[30:38]),
-                        'y': float(line[38:46]),
-                        'z': float(line[46:54])},
-                occupancy=float(line[54:60]),
-                temp_factor=float(line[60:66]),
+                coords=Coords(x=maybe_float(line[30:38]),
+                              y=maybe_float(line[38:46]),
+                              z=maybe_float(line[46:54])),
+                occupancy=maybe_float(line[54:60]),
+                temp_factor=maybe_float(line[60:66]),
                 segment=line[72:76].strip(),
                 symbol=line[76:78].strip(),
                 charge=line[78:80].strip())
@@ -479,7 +535,7 @@ def read_pdb(filename, types=None):
         str filename
         opt [str in ['ATOM','HETATM','TER','HELIX','SHEET']] types
     """
-    types = ['ATOM', 'HETATM', 'TER', 'HELIX', 'SHEET'] or types
+    types = types or ['ATOM', 'HETATM', 'TER', 'HELIX', 'SHEET']
     with open(filename, 'r') as pdb:
         records = filter(None, [read_record(line) for line in pdb])
     return [r for r in records if r.record_type in types]
