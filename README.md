@@ -3,9 +3,12 @@
 Set of classes for object-oriented processing of records from PDB files
 
 © 2019  George D. Watson, University of York
-[https://georgewatson.me](https://georgewatson.me)
+([https://georgewatson.me](https://georgewatson.me))
 
 Available under an MIT license. See the LICENSE file.
+
+This package is described in
+[a post on my blog](https://georgewatson.me/blog/science/2019/06/04/object-oriented-processing-of-pdb-files-in-python/).
 
 Supports the following record types:
 * `ATOM`
