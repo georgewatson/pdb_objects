@@ -24,6 +24,7 @@ Exposes the following classes:
 * `PDBRecord` (should not normally be used directly, except to implement
   another record type)
 * `Residue`
+* `Coords`
 * `Atom` (for ATOM and HETATM records)
 * `Helix`
 * `Sheet`
