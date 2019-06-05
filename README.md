@@ -42,8 +42,9 @@ See class, function, and method docstrings for more information.
 
 ## Installation
 
-Available on PyPI.
+Available [on PyPI](https://pypi.org/project/pdb-objects/).
 Use `pip3 install pdb-objects` to install,
 then put `import pdb_objects` at the top of your script.
 
-Alternatively, clone this repository.
+Alternatively, clone
+[this repository](https://github.com/georgewatson/pdb_objects).

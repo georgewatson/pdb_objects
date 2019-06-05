@@ -400,6 +400,7 @@ class Ter(PDBRecord):
     def __str__(self):
         return "".join(['{:6}'.format(self.record_type),
                         '{:>5}'.format(self.num),
+                        " "*6,
                         (self.residue or Residue()).__str__()])
 
 
